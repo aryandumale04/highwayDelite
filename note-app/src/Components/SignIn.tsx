@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 
 const LandingPage = () => {
@@ -39,7 +40,7 @@ const LandingPage = () => {
                            
                             <button className='bg-blue-500 rounded-md p-2 text-white '> Get OTP</button>
                         </form>
-                        <p className='mt-6 ml-5'> Need an account? <a href='https://www.google.com' className='text-blue-600 font-medium underline'>Create One</a></p>
+                        <p className='mt-6 ml-5'> Need an account? <Link to='/'  className='text-blue-600 font-medium underline'>Create one</Link></p>
                     </div>
                 </div>
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 
 const LandingPage = () => {
@@ -44,7 +45,7 @@ const LandingPage = () => {
                             <input type="password"  placeholder='OTP' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
                             <button className='bg-blue-500 rounded-md p-2 text-white '> Get OTP</button>
                         </form>
-                        <p className='mt-6 ml-5'> Already have an account?? <a href='https://www.google.com' className='text-blue-600 font-medium underline'>Sign in</a></p>
+                        <p className='mt-6 ml-5'> Already have an account?? <Link to="/signUpPage" className='font-medium underline text-blue-600'>Sign in</Link></p>
                     </div>
                 </div>
 

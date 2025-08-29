@@ -2,9 +2,18 @@ import React from 'react'
 import LandingPage from './Components/LandingPage'
 import SignInPage from './Components/SignIn'
 
+import { BrowserRouter as Router,Route,Routes } from 'react-router-dom'
 const App = () => {
   return (
-   <SignInPage></SignInPage>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage/>}/>
+        <Route path='/signUpPage' element={<SignInPage/>}></Route>
+
+       
+      </Routes>
+    </Router>
+   
   )
 }
 
