@@ -27,8 +27,8 @@ const LandingPage = () => {
 
         }else{
             // matlab otp pe click kiya hai 
+
             
-            setshowOTPInput(true);
                  
         }
     } 
