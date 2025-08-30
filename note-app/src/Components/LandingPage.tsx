@@ -1,21 +1,30 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link ,useNavigate} from 'react-router-dom'
 
 
 const LandingPage = () => {
+    const [generayedOTP,setgeneratedOTP] = useState("");
+    const [showOTPInput,setOTPInput] = useState(false);
+    const [enteredOTP,setEnteredOTP] = useState("");
+    const navigate = useNavigate();
 
     // functionality part  
 
-        function isValidEmail(email) {
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return regex.test(email);
-            }
+        
 
     const handleGetOTP= ()=>{
         // fetching the inputs 
        const Name = document.getElementById("name-input").value.trim();
        const email= document.getElementById("email").value.trim();
        const dob= document.getElementById("DOB").value.trim();
+
+
+
+
+       function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
        
 
        // validating the inputs
@@ -41,19 +50,43 @@ const LandingPage = () => {
 
         //    3.Email
        if(email === ""){
-        alert("Please enter your email!");
-        return ;
-       } else{
+                alert("Please enter your email!");
+                return ;
+       } else {
                 const emailCheck= isValidEmail(email);
                 if(!emailCheck){
                      alert("Please enter a valid email.");
                      return ;
 
+                }
+            }
+
+
+       // all the inputs are valid 
+       
+
+       // otp generation 
+       if(!showOTPInput){
+        // generate the code 
+            const otp =  Math.floor(100000  + Math.random() * 900000).toString(); 
+
+            setgeneratedOTP(otp);
+
+            alert("OTP generated ,check console. ");
+            console.log("OTP - ",otp);
+            setOTPInput(true);
+       }else{
+        // verify the otp 
+        if(enteredOTP === generayedOTP){
+            alert("OTP verification successfull !!");
+            navigate("/userPage");
+
+
+        }else{
+            alert("Please enter valid OTP");
         }
        }
 
-
-       console.log("Inputs verified now will generate OTP");
 
        
 
@@ -75,7 +108,7 @@ const LandingPage = () => {
    <div className='landingPageContainer flex max-w-full h-screen m-1  border-2 border-gray-600 rounded-s-3xl px-1 py-1 gap-9 justify-center'>
        
         {/* // container 1 */}
-        <div className='leftContainer flex flex-col w-[40%]'>
+        <div className='leftContainer flex flex-col w-[44%]'>
 
          {/* all the content of left side inside this container */}
             <div className='leftContent p-8 w-[85%] '>
@@ -108,10 +141,12 @@ const LandingPage = () => {
                                 <input type="text" id="DOB" placeholder='Date of Birth' className='p-2 focus:outline-none' />
                             </div>
                             <input type="text" id="email" placeholder='email' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
-                            <input type="password"  placeholder='OTP' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
-                            <button  type= "button" onClick= {handleGetOTP} className='bg-blue-500 rounded-md p-2 text-white '> Get OTP</button>
+                            {showOTPInput &&<input type="password"  placeholder='OTP' onChange={(e)=>{
+                                setEnteredOTP(e.target.value);
+                            }} className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />}
+                            <button  type= "button" onClick= {handleGetOTP} className='bg-blue-500 rounded-md p-2 text-white '> { showOTPInput ? 'Sign up' : 'Get OTP'}</button>
                         </form>
-                        <p className='mt-6 ml-5'> Already have an account?? <Link to="/signUpPage" className='font-medium underline text-blue-600'>Sign in</Link></p>
+                        <p className='mt-6 ml-5'> Already have an account?? <Link to="/signInPage" className='font-medium underline text-blue-600'>Sign in</Link></p>
                     </div>
                 </div>
 
@@ -121,10 +156,10 @@ const LandingPage = () => {
 
 
         {/* container 2 */}
-        <div className='rightContainer w-3/5 ml-9  flex h-full'>
+        <div className='rightContainer w-[56%] ml-9  flex h-full justify-center'>
             {/* all the right side content */}
-            <div className='imageContainer'>
-                <img src="./wallpaper.png" alt="background" className='w-full h-full object-cover'  />
+            <div className='imageContainer  w-[75%]'>
+                <img src="./wallpaper.png" alt="background" className='w-full h-full object-cover rounded-lg'  />
             </div>
 
         </div>
