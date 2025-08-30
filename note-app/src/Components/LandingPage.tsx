@@ -3,6 +3,72 @@ import { Link } from 'react-router-dom'
 
 
 const LandingPage = () => {
+
+    // functionality part  
+
+        function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+    const handleGetOTP= ()=>{
+        // fetching the inputs 
+       const Name = document.getElementById("name-input").value.trim();
+       const email= document.getElementById("email").value.trim();
+       const dob= document.getElementById("DOB").value.trim();
+       
+
+       // validating the inputs
+
+    //    1.Name
+       if(Name === ""){
+        alert("Please enter your name !");
+        return ;
+       }
+
+
+
+   
+
+    //    2.DateofBirth
+
+       if(dob === ""){
+        alert("Please enter the date of birth");
+        return ;
+       }
+
+
+
+        //    3.Email
+       if(email === ""){
+        alert("Please enter your email!");
+        return ;
+       } else{
+                const emailCheck= isValidEmail(email);
+                if(!emailCheck){
+                     alert("Please enter a valid email.");
+                     return ;
+
+        }
+       }
+
+
+       console.log("Inputs verified now will generate OTP");
+
+       
+
+
+    }
+
+
+
+
+
+
+
+
+
+    // UI part
   return (
 
     // main container
@@ -39,11 +105,11 @@ const LandingPage = () => {
                             <div className='dateInput flex border border-gray-300 rounded-md focus:ring-2 focus: ring-blue-500 '>
                                <img src="/cal.png" className='ml-2 mt-2 h-6'>
                                </img>
-                                <input type="text" placeholder='Date of Birth' className='p-2 focus:outline-none' />
+                                <input type="text" id="DOB" placeholder='Date of Birth' className='p-2 focus:outline-none' />
                             </div>
-                            <input type="text"  placeholder='email' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
+                            <input type="text" id="email" placeholder='email' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
                             <input type="password"  placeholder='OTP' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
-                            <button className='bg-blue-500 rounded-md p-2 text-white '> Get OTP</button>
+                            <button  type= "button" onClick= {handleGetOTP} className='bg-blue-500 rounded-md p-2 text-white '> Get OTP</button>
                         </form>
                         <p className='mt-6 ml-5'> Already have an account?? <Link to="/signUpPage" className='font-medium underline text-blue-600'>Sign in</Link></p>
                     </div>
