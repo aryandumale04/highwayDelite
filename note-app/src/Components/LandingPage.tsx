@@ -1,18 +1,25 @@
+// importing basic libraries required
 import React, { useState } from 'react'
 import { Link ,useNavigate} from 'react-router-dom'
+import axios from 'axios';
+
 
 
 const LandingPage = () => {
-    const [generayedOTP,setgeneratedOTP] = useState("");
+
+
+
+    // state management 
+   
     const [showOTPInput,setOTPInput] = useState(false);
     const [enteredOTP,setEnteredOTP] = useState("");
     const navigate = useNavigate();
 
-    // functionality part  
+  
 
         
 
-    const handleGetOTP= ()=>{
+    const handleGetOTP=  async  ()=>{
         // fetching the inputs 
        const Name = document.getElementById("name-input").value.trim();
        const email= document.getElementById("email").value.trim();
@@ -67,24 +74,41 @@ const LandingPage = () => {
 
        // otp generation 
        if(!showOTPInput){
-        // generate the code 
-            const otp =  Math.floor(100000  + Math.random() * 900000).toString(); 
+        // generate the code  USING BACKEND
+            try{
 
-            setgeneratedOTP(otp);
+                const res = await axios.post("http://localhost:5000/generate-otp-signup",{
 
-            alert("OTP generated ,check console. ");
-            console.log("OTP - ",otp);
-            setOTPInput(true);
+                    name : Name,
+                    email : email,
+                    dob: dob
+                });
+                alert(`Your OTP is :${res.data.otp} `); // success message
+                setOTPInput(true);
+
+            }catch(err :  any){
+
+                alert(err.response?.data?.message || "Server error");
+
+            }
+            
        }else{
-        // verify the otp 
-        if(enteredOTP === generayedOTP){
-            alert("OTP verification successfull !!");
-            navigate("/userPage");
-
-
-        }else{
-            alert("Please enter valid OTP");
-        }
+        // verify the otp  USING BACKEND
+       
+            try{
+                 const res= await axios.post('http://localhost:5000/verify-otp-signup',{
+                    email: email ,
+                    otp: enteredOTP
+                });
+                localStorage.setItem('token',res.data.token);
+                setEnteredOTP("");   
+                setOTPInput(false);
+                navigate('/userPage');
+            
+            }catch(err : any ){
+                alert(err.response?.data?.message || "Server error");
+            }
+               
        }
 
 

@@ -4,7 +4,7 @@ const express = require("express")
 const cors = require("cors") 
 require("dotenv").config();
 const connectDB = require("./config/db")
-const user =  require("./models/User")
+const User =  require("./models/User")
 const generateToken =  require("./utils/jwt")
 
 
@@ -23,7 +23,7 @@ connectDB()
 // default route 
 
 app.get("/", (req, res) => {
-  res.send("Helldvsdvfdvfvfo!");
+  res.send("udibaba!");
 });
 
 
@@ -41,14 +41,14 @@ app.post("/generate-otp-signup", async(req,res)=>{
   }
 
   try{
-    const existingUser = await user.findOne({email});
+    const existingUser = await User.findOne({email});
     if(existingUser){
        return  res.status(400).json({message : "User with that email already exists !"});
     } else {
       
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
        // fixed math
-       const newUser = await user.create({
+       const newUser = await User.create({
         name,
         email,
         dob,
@@ -68,7 +68,7 @@ app.post("/generate-otp-signup", async(req,res)=>{
 
 app.post("/generate-otp-signin", async (req,res)=>{
   const {email} = req.body;
-  const existingUser = await user.findOne({email}); // added await
+  const existingUser = await User.findOne({email}); // added await
   try{
     if(!existingUser){
     return res.status(400).json({message: "User with that email does not exist !"});
@@ -94,7 +94,7 @@ app.post("/verify-otp-signup", async (req,res)=>{
   if(!otp) return res.status(400).json({message:"OTP cannot be empty"});
 
 
-  const existingUser =  await user.findOne({
+  const existingUser =  await User.findOne({
     email
   })
   try{

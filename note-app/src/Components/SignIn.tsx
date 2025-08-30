@@ -1,8 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 
 const LandingPage = () => {
+    function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+    const [showOTPInput,setshowOTPInput] = useState(false);
+    const handleButton = ()=>{
+        // firstly verify the input that is here email 
+        const email =  document.getElementById("email")?.ariaValueMax.trim();
+        if(!email){
+            alert("Email cannot be empty");
+        }else{
+            const res = isValidEmail(email);
+            if(!res){
+                alert("Please enter a valid email address");
+            }
+
+        }
+        if(showOTPInput){
+            // matlab get otp pe click kiya hai so 
+            
+
+        }else{
+            // matlab otp pe click kiya hai 
+            
+            setshowOTPInput(true);
+                 
+        }
+    } 
+
   return (
 
     // main container
@@ -36,9 +66,10 @@ const LandingPage = () => {
                         
                             
                            
-                            <input type="text"  placeholder='email' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
+                            <input type="text"  placeholder='email'  id= "email" className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
+                            {showOTPInput &&<input type="password"  placeholder='OTP' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />}
                            
-                            <button className='bg-blue-500 rounded-md p-2 text-white '> Get OTP</button>
+                            <button className='bg-blue-500 rounded-md p-2 text-white' onClick={handleButton}> {showOTPInput ? 'Get OTP' : 'Sign in'}</button>
                         </form>
                         <p className='mt-6 ml-5'> Need an account? <Link to='/'  className='text-blue-600 font-medium underline'>Create one</Link></p>
                     </div>
