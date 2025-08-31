@@ -31,7 +31,7 @@ const LandingPage = () => {
 
         }
         if(showOTPInput){
-            // matlab sign in karna hai 
+            // user requests to sign in so verify the otp  
             try{
                 const res =  await axios.post("http://localhost:5000/verify-otp-signin" ,{
                     email,
