@@ -6,6 +6,12 @@ const userSchema = new mongoose.Schema({
   otp: { type: String },
   dob: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
+  authType: {   // <-- renamed to match backend routes
+    type: String,
+    enum: ["otp", "google"],
+    required: true,
+    default: "otp"
+  },
   notes: [
     {
       title: { type: String, required: true },

@@ -130,7 +130,7 @@ const LandingPage = () => {
                 </div>
               </form>
 
-              <p className='mt-6 text-center md:text-left'>
+              <p className='mt-6 text-center'>
                 Already have an account? <Link to="/signInPage" className='font-medium underline text-blue-600'>Sign in</Link>
               </p>
             </div>

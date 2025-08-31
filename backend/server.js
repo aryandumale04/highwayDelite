@@ -26,8 +26,8 @@ app.get("/", (req, res) => {
 // Google OAuth client
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// --------------------- Google Login ---------------------
-app.post("/google-login", async (req, res) => {
+// --------------------- Google Signup ---------------------
+app.post("/google-signup", async (req, res) => {
   const { idToken } = req.body;
   if (!idToken) return res.status(400).json({ message: "ID token is required" });
 
@@ -36,30 +36,56 @@ app.post("/google-login", async (req, res) => {
       idToken,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
     const payload = ticket.getPayload();
     const { email, name } = payload;
 
-    // check if user exists
+    // check if user already exists
     let user = await User.findOne({ email });
-    if (!user) {
-      user = await User.create({
-        name,
-        email,
-        dob: "N/A",
-        isVerified: true,
-      });
+    if (user) {
+      return res.status(400).json({ message: "User already exists, please login" });
+    }
+
+    // create new google user
+    user = await User.create({
+      name,
+      email,
+      dob: "N/A",
+      isVerified: true,
+      authType: "google", // <-- FIXED: store authType
+    });
+
+    const token = generateToken(user._id);
+    res.status(201).json({ token, user: { name: user.name, email: user.email } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Google signup failed" });
+  }
+});
+
+// --------------------- Google Signin ---------------------
+app.post("/google-signin", async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) return res.status(400).json({ message: "ID token is required" });
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { email } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user || user.authType !== "google") {
+      return res.status(400).json({ message: "No Google account found, please signup first" });
     }
 
     const token = generateToken(user._id);
-
-    res.status(200).json({
-      token,
-      user: { name: user.name, email: user.email },
-    });
+    res.status(200).json({ token, user: { name: user.name, email: user.email } });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Google login failed" });
+    res.status(500).json({ message: "Google signin failed" });
   }
 });
 
@@ -85,6 +111,7 @@ app.post("/generate-otp-signup", async (req, res) => {
       dob,
       otp,
       isVerified: false,
+      authType: "otp", // <-- FIXED: explicitly mark as OTP signup
     });
 
     res.status(200).json({ message: "OTP generated successfully!", otp });
