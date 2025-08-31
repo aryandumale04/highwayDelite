@@ -65,21 +65,25 @@ const SignInPage = () => {
   };
 
   return (
-    <div className='landingPageContainer flex max-w-full h-screen m-1 border-2 border-gray-600 rounded-s-3xl px-1 py-1 gap-9 justify-center'>
+     <div className='landingPageContainer flex flex-col md:flex-row max-w-full h-screen m-1 border-2 border-gray-600 rounded-3xl px-1 py-1 gap-6 justify-center overflow-hidden'>
 
       {/* Left container */}
-      <div className='leftContainer flex flex-col w-[44%]'>
-        <div className='leftContent p-8 w-[85%]'>
+     <div className='leftContainer flex flex-col w-full md:w-[44%]'>
+        <div className='leftContent p-6 md:p-8 w-full md:w-[85%] mx-auto'>
 
           {/* Icon */}
-          <div className='icon w-full'>
-            <img src="./top.png" alt="hd icon" />
-          </div>
+          <div className="w-full flex justify-center md:justify-start md:ml-0 mb-2 ml-40 pl-4 md:pl-0">
+  <img 
+    src="./top.png" 
+    alt="hd icon" 
+    className="w-full h-auto object-contain" 
+  />
+</div>
 
           {/* Sign in */}
-          <div className='signup mt-32 mx-auto ml-36'>
-            <div className='signupTexts w-full'>
-              <div className='heading mb-3 text-3xl font-bold'>
+          <div className='signup mt-10 md:mt-32 mx-auto md:ml-36 w-full'>
+            <div className='signupTexts text-center md:text-left'>
+              <div className='heading mb-3 text-2xl md:text-3xl font-bold'>
                 <h1>Sign in</h1>
               </div>
               <div className='lineContent font-thin'>
@@ -106,7 +110,7 @@ const SignInPage = () => {
                 </div>
               </form>
 
-              <p className='mt-6 ml-5'>
+              <p className='mt-6 text-center md:text-left'>
                 Need an account? <Link to='/' className='text-blue-600 font-medium underline'>Create one</Link>
               </p>
             </div>
@@ -115,9 +119,9 @@ const SignInPage = () => {
       </div>
 
       {/* Right container */}
-      <div className='rightContainer w-3/5 ml-9 flex h-full'>
-        <div className='imageContainer'>
-          <img src="./wallpaper.png" alt="background" className='w-full h-full object-cover' />
+      <div className='rightContainer hidden md:flex w-[56%] ml-0 md:ml-9 h-full justify-center'>
+        <div className='imageContainer w-[90%] md:w-[75%]'>
+          <img src="./wallpaper.png" alt="background" className='w-full h-full object-cover rounded-lg' />
         </div>
       </div>
 
