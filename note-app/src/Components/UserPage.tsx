@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Trash2 } from "lucide-react"; // icon for delete
-import spiralImage from "/tp.png"; // your spiral image
+import { Trash2, X } from "lucide-react"; 
+import spiralImage from "/tp.png"; 
 import { Link } from "react-router-dom";
 
 interface Note {
@@ -18,10 +18,14 @@ const UserPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [newNoteTitle, setNewNoteTitle] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSignOut = () => {
-    localStorage.removeItem("token");  // clear JWT
-    window.location.href = "/signInPage"; // redirect
+    localStorage.removeItem("token");  
+    window.location.href = "/signInPage"; 
   };
 
   const fetchUserAndNotes = async () => {
@@ -29,14 +33,12 @@ const UserPage: React.FC = () => {
     if (!token) return;
 
     try {
-      // Fetch user info
       const userRes = await fetch("http://localhost:5000/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const userData = await userRes.json();
       if (userRes.ok) setUser(userData);
 
-      // Fetch notes
       const notesRes = await fetch("http://localhost:5000/notes", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -44,6 +46,7 @@ const UserPage: React.FC = () => {
       if (notesRes.ok) setNotes(notesData);
     } catch (err) {
       console.error("Error fetching data:", err);
+      setErrorMessage("Failed to fetch user data or notes.");
     } finally {
       setLoading(false);
     }
@@ -54,8 +57,12 @@ const UserPage: React.FC = () => {
   }, []);
 
   const handleCreateNote = async () => {
-    const title = prompt("Enter note title:");
-    if (!title) return;
+    setErrorMessage("");
+    setSuccessMessage("");
+    if (!newNoteTitle.trim()) {
+      setErrorMessage("Please enter a note title.");
+      return;
+    }
 
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -67,14 +74,21 @@ const UserPage: React.FC = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({ title: newNoteTitle }),
       });
 
       const newNote = await res.json();
-      if (res.ok) setNotes((prev) => [...prev, newNote]);
-      else console.error(newNote.message);
+      if (res.ok) {
+        setNotes((prev) => [...prev, newNote]);
+        setNewNoteTitle("");
+        setSuccessMessage("Note created successfully!");
+        setShowNoteModal(false);
+      } else {
+        setErrorMessage(newNote.message || "Failed to create note.");
+      }
     } catch (err) {
       console.error("Error creating note:", err);
+      setErrorMessage("Failed to create note.");
     }
   };
 
@@ -90,9 +104,10 @@ const UserPage: React.FC = () => {
 
       const data = await res.json();
       if (res.ok) setNotes((prev) => prev.filter((note) => note._id !== noteId));
-      else console.error(data.message);
+      else setErrorMessage(data.message || "Failed to delete note.");
     } catch (err) {
       console.error("Error deleting note:", err);
+      setErrorMessage("Failed to delete note.");
     }
   };
 
@@ -102,7 +117,8 @@ const UserPage: React.FC = () => {
     );
 
   return (
-    <div className="min-h-screen bg-white flex flex-col px-4 py-6">
+    <div className="min-h-screen bg-white flex flex-col px-4 py-6 relative">
+
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-2">
@@ -124,11 +140,23 @@ const UserPage: React.FC = () => {
 
       {/* Create Note Button */}
       <button
-        onClick={handleCreateNote}
+        onClick={() => { setShowNoteModal(true); setErrorMessage(""); setSuccessMessage(""); }}
         className="bg-blue-600 text-white font-medium py-3 rounded-xl shadow mb-6"
       >
         Create Note
       </button>
+
+      {/* Error / Success Messages */}
+      {errorMessage && (
+        <div className="mb-4 p-2 text-sm text-red-600 bg-red-100 border border-red-400 rounded-md text-center">
+          {errorMessage}
+        </div>
+      )}
+      {successMessage && (
+        <div className="mb-4 p-2 text-sm text-green-700 bg-green-100 border border-green-400 rounded-md text-center">
+          {successMessage}
+        </div>
+      )}
 
       {/* Notes Section */}
       {notes.length > 0 && (
@@ -146,6 +174,39 @@ const UserPage: React.FC = () => {
               />
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal for note input */}
+      {showNoteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-80 max-w-[90%]">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">New Note</h3>
+              <X className="w-5 h-5 cursor-pointer" onClick={() => setShowNoteModal(false)} />
+            </div>
+            <input
+              type="text"
+              placeholder="Enter note title"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              value={newNoteTitle}
+              onChange={(e) => setNewNoteTitle(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowNoteModal(false)}
+                className="px-4 py-2 rounded-md border border-gray-300 text-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateNote}
+                className="px-4 py-2 rounded-md bg-blue-600 text-white"
+              >
+                Create
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

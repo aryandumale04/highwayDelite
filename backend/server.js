@@ -20,7 +20,7 @@ connectDB();
 
 // default route
 app.get("/", (req, res) => {
-  res.send("udibaba!");
+  res.send("kemcho !");
 });
 
 // Google OAuth client
