@@ -52,7 +52,7 @@ const SignInPage = () => {
     try {
       if (!response.credential) return alert("Google login failed!");
 
-      const res = await axios.post("http://localhost:5000/google-login", {
+      const res = await axios.post("http://localhost:5000/google-signin", {
         idToken: response.credential
       });
 
@@ -110,7 +110,7 @@ const SignInPage = () => {
                 </div>
               </form>
 
-              <p className='mt-6 text-center md:text-left'>
+              <p className='mt-6 text-center'>
                 Need an account? <Link to='/' className='text-blue-600 font-medium underline'>Create one</Link>
               </p>
             </div>

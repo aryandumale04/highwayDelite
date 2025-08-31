@@ -52,7 +52,7 @@ const LandingPage = () => {
     try {
       if (!response.credential) return alert("Google login failed!");
 
-      const res = await axios.post("http://localhost:5000/google-login", {
+      const res = await axios.post("http://localhost:5000/google-signup", {
         idToken: response.credential
       });
 
