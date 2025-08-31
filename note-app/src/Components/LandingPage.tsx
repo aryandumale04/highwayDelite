@@ -1,4 +1,3 @@
-// importing basic libraries required
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,22 +6,29 @@ import { GoogleLogin } from '@react-oauth/google';
 const LandingPage = () => {
   const [showOTPInput, setOTPInput] = useState(false);
   const [enteredOTP, setEnteredOTP] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");    // Error messages
+  const [successMessage, setSuccessMessage] = useState(""); // Success messages
+  const [message, setMessage] = useState(""); // For OTP or other info
   const navigate = useNavigate();
 
   const handleGetOTP = async () => {
-    const Name = document.getElementById("name-input").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const dob = document.getElementById("DOB").value.trim();
+    setErrorMessage("");
+    setSuccessMessage("");
+    setMessage("");
 
-    function isValidEmail(email) {
+    const Name = (document.getElementById("name-input") as HTMLInputElement).value.trim();
+    const email = (document.getElementById("email") as HTMLInputElement).value.trim();
+    const dob = (document.getElementById("DOB") as HTMLInputElement).value.trim();
+
+    function isValidEmail(email: string) {
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return regex.test(email);
     }
 
-    if (!Name) return alert("Please enter your name!");
-    if (!dob) return alert("Please enter the date of birth");
-    if (!email) return alert("Please enter your email!");
-    if (!isValidEmail(email)) return alert("Please enter a valid email.");
+    if (!Name) return setErrorMessage("Please enter your name!");
+    if (!dob) return setErrorMessage("Please enter the date of birth");
+    if (!email) return setErrorMessage("Please enter your email!");
+    if (!isValidEmail(email)) return setErrorMessage("Please enter a valid email.");
 
     try {
       if (!showOTPInput) {
@@ -31,8 +37,9 @@ const LandingPage = () => {
           email,
           dob
         });
-        alert(`Your OTP is: ${res.data.otp}`);
         setOTPInput(true);
+        setMessage(`Your OTP is: ${res.data.otp}`);
+        setSuccessMessage("OTP generated successfully!");
       } else {
         const res = await axios.post("http://localhost:5000/verify-otp-signup", {
           email,
@@ -41,59 +48,53 @@ const LandingPage = () => {
         localStorage.setItem("token", res.data.token);
         setEnteredOTP("");
         setOTPInput(false);
-        navigate("/userPage");
+        setSuccessMessage(res.data.message || "Signed up successfully!");
+        setMessage("");
+        setTimeout(() => navigate("/userPage"), 1500); // Delay to show message
       }
-    } catch (err) {
-      alert(err.response?.data?.message || "Server error");
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage(err.response?.data?.message || "Server error");
     }
   };
 
-  const handleGoogleLogin = async (response) => {
+  const handleGoogleLogin = async (response: any) => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    setMessage("");
     try {
-      if (!response.credential) return alert("Google login failed!");
+      if (!response.credential) return setErrorMessage("Google login failed!");
 
       const res = await axios.post("http://localhost:5000/google-signup", {
         idToken: response.credential
       });
 
       localStorage.setItem("token", res.data.token);
-      navigate("/userPage");
-    } catch (err) {
-      alert(err.response?.data?.message || "Server error");
+      setSuccessMessage("Signed up with Google successfully!");
+      setTimeout(() => navigate("/userPage"), 1500);
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage(err.response?.data?.message || "Server error");
     }
   };
 
   return (
     <div className='landingPageContainer flex flex-col md:flex-row max-w-full h-screen m-1 border-2 border-gray-600 rounded-3xl px-1 py-1 gap-6 justify-center overflow-hidden'>
 
-
       {/* Left container */}
       <div className='leftContainer flex flex-col w-full md:w-[44%]'>
         <div className='leftContent p-6 md:p-8 w-full md:w-[85%] mx-auto'>
 
           {/* Icon */}
-         {/* 1. icon part */}
-{/* 1. icon part */}
-{/* 1. icon part */}
-{/* Icon */}
-{/* Icon */}
-{/* Icon */}
-<div className="w-full flex justify-center md:justify-start md:ml-0 mb-2 ml-40 pl-4 md:pl-0">
-  <img 
-    src="./top.png" 
-    alt="hd icon" 
-    className="w-full h-auto object-contain" 
-  />
-</div>
+          <div className="w-full flex justify-center md:justify-start md:ml-0 mb-2 ml-40 pl-4 md:pl-0">
+            <img 
+              src="./top.png" 
+              alt="hd icon" 
+              className="w-full h-auto object-contain" 
+            />
+          </div>
 
-
-
-
-
-
-
-
-          {/* Signup */}
+          {/* Sign up */}
           <div className='signup mt-10 md:mt-32 mx-auto md:ml-36 w-full'>
             <div className='signupTexts text-center md:text-left'>
               <div className='heading mb-3 text-2xl md:text-3xl font-bold'>
@@ -125,10 +126,27 @@ const LandingPage = () => {
                   </button>
 
                   <div className='flex justify-center mt-4'>
-                    <GoogleLogin onSuccess={handleGoogleLogin} onError={() => alert("Google Login Failed")} />
+                    <GoogleLogin onSuccess={handleGoogleLogin} onError={() => setErrorMessage("Google Login Failed")} />
                   </div>
                 </div>
               </form>
+
+              {/* Messages */}
+              {errorMessage && (
+                <div className="mt-4 p-2 text-sm text-red-600 bg-red-100 border border-red-400 rounded-md text-center">
+                  {errorMessage}
+                </div>
+              )}
+              {successMessage && (
+                <div className="mt-2 p-2 text-sm text-green-700 bg-green-100 border border-green-400 rounded-md text-center">
+                  {successMessage}
+                </div>
+              )}
+              {message && (
+                <div className="mt-2 p-2 text-sm text-blue-700 bg-blue-100 border border-blue-400 rounded-md text-center">
+                  {message}
+                </div>
+              )}
 
               <p className='mt-6 text-center'>
                 Already have an account? <Link to="/signInPage" className='font-medium underline text-blue-600'>Sign in</Link>
@@ -142,7 +160,6 @@ const LandingPage = () => {
       <div className='rightContainer hidden md:flex w-[56%] ml-0 md:ml-9 h-full justify-center'>
         <div className='imageContainer w-[90%] md:w-[75%]'>
           <img src="./wallpaper.png" alt="background" className='w-full h-full object-cover rounded-lg' />
-
         </div>
       </div>
     </div>
