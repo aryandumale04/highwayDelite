@@ -131,7 +131,7 @@ app.post("/verify-otp-signin", async(req,res) => {
   const{email,otp} = req.body;
   if(!otp) return res.status(400).json({message:"OTP cannot be empty"});
 
-  const existingUser = await  user.findOne({email});
+  const existingUser = await  User.findOne({email});
   try{
     if(!existingUser){
    return  res.status(400).json({

@@ -25,6 +25,7 @@ const LandingPage = () => {
        const email= document.getElementById("email").value.trim();
        const dob= document.getElementById("DOB").value.trim();
 
+       
 
 
 

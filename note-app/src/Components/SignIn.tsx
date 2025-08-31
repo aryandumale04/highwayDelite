@@ -1,17 +1,26 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios';
 
 
 const LandingPage = () => {
+    const [generatedOTP,setgeneratedOTP] = useState("");
+    const navigate = useNavigate();
+
+
+
     function isValidEmail(email) {
                 const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 return regex.test(email);
             }
 
+
     const [showOTPInput,setshowOTPInput] = useState(false);
-    const handleButton = ()=>{
+    const handleButton =  async (e)=>{
+        e.preventDefault();
+       
         // firstly verify the input that is here email 
-        const email =  document.getElementById("email")?.ariaValueMax.trim();
+        const email =  document.getElementById("email").value.trim();
         if(!email){
             alert("Email cannot be empty");
         }else{
@@ -22,12 +31,48 @@ const LandingPage = () => {
 
         }
         if(showOTPInput){
-            // matlab get otp pe click kiya hai so 
+            // matlab sign in karna hai 
+            try{
+                const res =  await axios.post("http://localhost:5000/verify-otp-signin" ,{
+                    email,
+                    otp : generatedOTP
+                });
+                if(res.status === 200){
+                    if(res.data.token){
+                        localStorage.setItem("token",res.data.token);
+                    }
+                    alert(res.data.message || "Signed in Successfully");
+                    setgeneratedOTP("");
+                    setshowOTPInput(false);
+                    navigate("/userPage");
+                }else{
+                    alert(res.data.message || "Sign in failed");
+                }
+
+            }catch(err){
+                console.log("Error Verifying the OTP : ",err);
+                alert("Something went wrong while verifying the OTP");
+            }
             
 
         }else{
-            // matlab otp pe click kiya hai 
+            // matlab otp generate karna hai 
+            try{
+                const res = await axios.post("http://localhost:5000/generate-otp-signin",{
+                    email
+                })
+                if(res.status === 200){
+                    alert(`Your OTP is :${res.data.otp} `);
+                    setshowOTPInput(true);
 
+                }else{
+                    alert(res.data.message || "Failed to generate OTP");
+                }
+            }catch(err){
+
+                console.log("Error sending OTP : ",err);
+                alert("Something went wrong while sending OTP");
+            }
             
                  
         }
@@ -36,10 +81,10 @@ const LandingPage = () => {
   return (
 
     // main container
-   <div className='landingPageContainer flex max-w-full h-screen m-1  border-2 border-gray-600 rounded-s-3xl px-1 py-1 gap-9 justify-center'>
+  <div className='landingPageContainer flex max-w-full h-screen m-1  border-2 border-gray-600 rounded-s-3xl px-1 py-1 gap-9 justify-center'>
        
         {/* // container 1 */}
-        <div className='leftContainer flex flex-col w-[40%]'>
+        <div className='leftContainer flex flex-col w-[44%]'>
 
          {/* all the content of left side inside this container */}
             <div className='leftContent p-8 w-[85%] '>
@@ -67,9 +112,10 @@ const LandingPage = () => {
                             
                            
                             <input type="text"  placeholder='email'  id= "email" className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
-                            {showOTPInput &&<input type="password"  placeholder='OTP' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />}
+                            {showOTPInput &&<input type="password"  placeholder='OTP' className='p-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            onChange={(e)=>{setgeneratedOTP(e.target.value)}} />}
                            
-                            <button className='bg-blue-500 rounded-md p-2 text-white' onClick={handleButton}> {showOTPInput ? 'Get OTP' : 'Sign in'}</button>
+                            <button className='bg-blue-500 rounded-md p-2 text-white' onClick={handleButton}> {showOTPInput ? 'Sign in' : 'Get OTP'}</button>
                         </form>
                         <p className='mt-6 ml-5'> Need an account? <Link to='/'  className='text-blue-600 font-medium underline'>Create one</Link></p>
                     </div>
