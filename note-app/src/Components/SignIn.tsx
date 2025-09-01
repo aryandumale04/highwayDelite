@@ -31,7 +31,6 @@ const SignInPage: React.FC = () => {
 
     try {
       if (showOTPInput) {
-        // Verify OTP
         const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/verify-otp-signin", {
           email,
           otp: generatedOTP
@@ -45,7 +44,6 @@ const SignInPage: React.FC = () => {
           setTimeout(() => navigate("/userPage"), 1500); 
         }
       } else {
-        // Generate OTP
         const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/generate-otp-signin", { email });
         if (res.status === 200) {
           setShowOTPInput(true);
@@ -126,13 +124,12 @@ const SignInPage: React.FC = () => {
                   {showOTPInput ? 'Sign in' : 'Get OTP'}
                 </button>
 
-                {/* Google Login Button */}
                 <div className='flex justify-center mt-4'>
                   <GoogleLogin onSuccess={handleGoogleLogin} onError={() => setErrorMessage("Google Login Failed")} />
                 </div>
               </form>
 
-              {/* Display messages */}
+              {/* Messages */}
               {errorMessage && (
                 <div className="mt-4 p-2 text-sm text-red-600 bg-red-100 border border-red-400 rounded-md text-center">
                   {errorMessage}

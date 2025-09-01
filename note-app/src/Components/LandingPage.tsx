@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';              // Removed AxiosResponse from runtime import
-import type { AxiosResponse } from 'axios'; // Only for TypeScript type checking
+import axios from 'axios'; // runtime import
+import type { AxiosResponse } from 'axios'; // TypeScript type only
 import { GoogleLogin } from '@react-oauth/google';
 
 const LandingPage: React.FC = () => {
   const [showOTPInput, setOTPInput] = useState(false);
   const [enteredOTP, setEnteredOTP] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");    // Error messages
-  const [successMessage, setSuccessMessage] = useState(""); // Success messages
-  const [message, setMessage] = useState(""); // For OTP or other info
+  const [errorMessage, setErrorMessage] = useState("");    
+  const [successMessage, setSuccessMessage] = useState(""); 
+  const [message, setMessage] = useState(""); 
   const navigate = useNavigate();
 
   const handleGetOTP = async () => {
@@ -51,7 +51,7 @@ const LandingPage: React.FC = () => {
         setOTPInput(false);
         setSuccessMessage(res.data.message || "Signed up successfully!");
         setMessage("");
-        setTimeout(() => navigate("/userPage"), 1500); // Delay to show message
+        setTimeout(() => navigate("/userPage"), 1500);
       }
     } catch (err: any) {
       console.error(err);
@@ -81,18 +81,12 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className='landingPageContainer flex flex-col md:flex-row max-w-full h-screen m-1 border-2 border-gray-600 rounded-3xl px-1 py-1 gap-6 justify-center overflow-hidden'>
-
       {/* Left container */}
       <div className='leftContainer flex flex-col w-full md:w-[44%]'>
         <div className='leftContent p-6 md:p-8 w-full md:w-[85%] mx-auto'>
-
           {/* Icon */}
           <div className="w-full flex justify-center md:justify-start md:ml-0 mb-2 ml-40 pl-4 md:pl-0">
-            <img 
-              src="./top.png" 
-              alt="hd icon" 
-              className="w-full h-auto object-contain" 
-            />
+            <img src="./top.png" alt="hd icon" className="w-full h-auto object-contain" />
           </div>
 
           {/* Sign up */}
