@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, X } from "lucide-react"; 
 import spiralImage from "/tp.png"; 
-import { Link } from "react-router-dom";
+
 
 // Define the Note type returned by backend
 interface Note {
