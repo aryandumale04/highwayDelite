@@ -32,7 +32,7 @@ const SignInPage: React.FC = () => {
     try {
       if (showOTPInput) {
         // Verify OTP
-        const res: AxiosResponse = await axios.post("http://localhost:5000/verify-otp-signin", {
+        const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/verify-otp-signin", {
           email,
           otp: generatedOTP
         });
@@ -46,7 +46,7 @@ const SignInPage: React.FC = () => {
         }
       } else {
         // Generate OTP
-        const res: AxiosResponse = await axios.post("http://localhost:5000/generate-otp-signin", { email });
+        const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/generate-otp-signin", { email });
         if (res.status === 200) {
           setShowOTPInput(true);
           setMessage(`Your OTP is: ${res.data.otp}`);
@@ -66,7 +66,7 @@ const SignInPage: React.FC = () => {
     try {
       if (!response.credential) return setErrorMessage("Google login failed!");
 
-      const res: AxiosResponse = await axios.post("http://localhost:5000/google-signin", {
+      const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/google-signin", {
         idToken: response.credential
       });
 

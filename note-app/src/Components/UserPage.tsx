@@ -35,13 +35,13 @@ const UserPage: React.FC = () => {
     if (!token) return;
 
     try {
-      const userRes = await fetch("http://localhost:5000/me", {
+      const userRes = await fetch("https://highwaydelite-28qp.onrender.com/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const userData: User = await userRes.json();
       if (userRes.ok) setUser(userData);
 
-      const notesRes = await fetch("http://localhost:5000/notes", {
+      const notesRes = await fetch("https://highwaydelite-28qp.onrender.com/notes", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const notesData: Note[] = await notesRes.json();
@@ -70,7 +70,7 @@ const UserPage: React.FC = () => {
     if (!token) return;
 
     try {
-      const res = await fetch("http://localhost:5000/notes", {
+      const res = await fetch("https://highwaydelite-28qp.onrender.com/notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ const UserPage: React.FC = () => {
     if (!token) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/notes/${noteId}`, {
+      const res = await fetch(`https://highwaydelite-28qp.onrender.com/notes/${noteId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
