@@ -28,20 +28,6 @@ Built with **React (Vite + TypeScript)** on the frontend and **Node.js + Express
 
 ---
 
-## Project Structure
-
-/project-root
-   ├── backend/              # Node.js + Express API
-   │   ├── models/
-   │   ├── routes/
-   │   ├── middleware/
-   │   ├── utils/
-   │   └── server.js
-   ├── frontend/             # React + Vite + Tailwind
-   │   ├── src/
-   │   ├── public/
-   │   └── vite.config.ts/js
-   └── README.md
 
 
 ---
