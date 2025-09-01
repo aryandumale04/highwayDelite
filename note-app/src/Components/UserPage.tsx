@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, X } from "lucide-react"; 
 import spiralImage from "/tp.png"; 
-
+import { useNavigate } from "react-router-dom"; // import useNavigate
 
 // Define the Note type returned by backend
 interface Note {
@@ -25,9 +25,11 @@ const UserPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
+  const navigate = useNavigate(); // initialize navigate
+
   const handleSignOut = () => {
     localStorage.removeItem("token");  
-    window.location.href = "/signInPage"; 
+    navigate("/signInPage"); // <-- use navigate instead of window.location.href
   };
 
   const fetchUserAndNotes = async () => {
