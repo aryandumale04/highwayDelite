@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';              // runtime import only
+import type { AxiosResponse } from 'axios'; // type-only import for TS
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 
-const SignInPage = () => {
-  const [generatedOTP, setGeneratedOTP] = useState("");
-  const [showOTPInput, setShowOTPInput] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");    // Error messages
-  const [successMessage, setSuccessMessage] = useState(""); // Success messages
-  const [message, setMessage] = useState(""); // For OTP or other info
+const SignInPage: React.FC = () => {
+  const [generatedOTP, setGeneratedOTP] = useState<string>("");
+  const [showOTPInput, setShowOTPInput] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");    
+  const [successMessage, setSuccessMessage] = useState<string>(""); 
+  const [message, setMessage] = useState<string>(""); 
   const navigate = useNavigate();
 
-  function isValidEmail(email: string) {
+  const isValidEmail = (email: string): boolean => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
-  }
+  };
 
   const handleButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -22,7 +23,8 @@ const SignInPage = () => {
     setSuccessMessage("");
     setMessage("");
 
-    const email = (document.getElementById("email") as HTMLInputElement).value.trim();
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const email = emailInput?.value.trim() || "";
 
     if (!email) return setErrorMessage("Email cannot be empty");
     if (!isValidEmail(email)) return setErrorMessage("Please enter a valid email address");
@@ -30,7 +32,7 @@ const SignInPage = () => {
     try {
       if (showOTPInput) {
         // Verify OTP
-        const res = await axios.post("http://localhost:5000/verify-otp-signin", {
+        const res: AxiosResponse = await axios.post("http://localhost:5000/verify-otp-signin", {
           email,
           otp: generatedOTP
         });
@@ -40,14 +42,14 @@ const SignInPage = () => {
           setShowOTPInput(false);
           setSuccessMessage(res.data.message || "Signed in successfully!");
           setMessage("");
-          setTimeout(() => navigate("/userPage"), 1500); // Delay to show success
+          setTimeout(() => navigate("/userPage"), 1500); 
         }
       } else {
         // Generate OTP
-        const res = await axios.post("http://localhost:5000/generate-otp-signin", { email });
+        const res: AxiosResponse = await axios.post("http://localhost:5000/generate-otp-signin", { email });
         if (res.status === 200) {
           setShowOTPInput(true);
-          setMessage(`Your OTP is: ${res.data.otp}`); // Display OTP in UI
+          setMessage(`Your OTP is: ${res.data.otp}`);
           setSuccessMessage("OTP generated successfully!");
         }
       }
@@ -57,14 +59,14 @@ const SignInPage = () => {
     }
   };
 
-  const handleGoogleLogin = async (response: any) => {
+  const handleGoogleLogin = async (response: CredentialResponse) => {
     setErrorMessage("");
     setSuccessMessage("");
     setMessage("");
     try {
       if (!response.credential) return setErrorMessage("Google login failed!");
 
-      const res = await axios.post("http://localhost:5000/google-signin", {
+      const res: AxiosResponse = await axios.post("http://localhost:5000/google-signin", {
         idToken: response.credential
       });
 
@@ -79,11 +81,9 @@ const SignInPage = () => {
 
   return (
     <div className='landingPageContainer flex flex-col md:flex-row max-w-full h-screen m-1 border-2 border-gray-600 rounded-3xl px-1 py-1 gap-6 justify-center overflow-hidden'>
-
       {/* Left container */}
       <div className='leftContainer flex flex-col w-full md:w-[44%]'>
         <div className='leftContent p-6 md:p-8 w-full md:w-[85%] mx-auto'>
-
           {/* Icon */}
           <div className="w-full flex justify-center md:justify-start md:ml-0 mb-2 ml-40 pl-4 md:pl-0">
             <img 
@@ -163,7 +163,6 @@ const SignInPage = () => {
           <img src="./wallpaper.png" alt="background" className='w-full h-full object-cover rounded-lg' />
         </div>
       </div>
-
     </div>
   );
 };

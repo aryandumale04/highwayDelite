@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios';              // Removed AxiosResponse from runtime import
+import type { AxiosResponse } from 'axios'; // Only for TypeScript type checking
 import { GoogleLogin } from '@react-oauth/google';
 
-const LandingPage = () => {
+const LandingPage: React.FC = () => {
   const [showOTPInput, setOTPInput] = useState(false);
   const [enteredOTP, setEnteredOTP] = useState("");
   const [errorMessage, setErrorMessage] = useState("");    // Error messages
@@ -32,7 +33,7 @@ const LandingPage = () => {
 
     try {
       if (!showOTPInput) {
-        const res = await axios.post("http://localhost:5000/generate-otp-signup", {
+        const res: AxiosResponse = await axios.post("http://localhost:5000/generate-otp-signup", {
           name: Name,
           email,
           dob
@@ -41,7 +42,7 @@ const LandingPage = () => {
         setMessage(`Your OTP is: ${res.data.otp}`);
         setSuccessMessage("OTP generated successfully!");
       } else {
-        const res = await axios.post("http://localhost:5000/verify-otp-signup", {
+        const res: AxiosResponse = await axios.post("http://localhost:5000/verify-otp-signup", {
           email,
           otp: enteredOTP
         });
@@ -65,7 +66,7 @@ const LandingPage = () => {
     try {
       if (!response.credential) return setErrorMessage("Google login failed!");
 
-      const res = await axios.post("http://localhost:5000/google-signup", {
+      const res: AxiosResponse = await axios.post("http://localhost:5000/google-signup", {
         idToken: response.credential
       });
 

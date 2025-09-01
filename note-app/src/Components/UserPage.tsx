@@ -3,12 +3,14 @@ import { Trash2, X } from "lucide-react";
 import spiralImage from "/tp.png"; 
 import { Link } from "react-router-dom";
 
+// Define the Note type returned by backend
 interface Note {
   _id: string;
   title: string;
-  createdAt: string;
+  createdAt?: string;
 }
 
+// Define the User type returned by backend
 interface User {
   name: string;
   email: string;
@@ -17,11 +19,11 @@ interface User {
 const UserPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showNoteModal, setShowNoteModal] = useState(false);
-  const [newNoteTitle, setNewNoteTitle] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showNoteModal, setShowNoteModal] = useState<boolean>(false);
+  const [newNoteTitle, setNewNoteTitle] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const handleSignOut = () => {
     localStorage.removeItem("token");  
@@ -36,13 +38,13 @@ const UserPage: React.FC = () => {
       const userRes = await fetch("http://localhost:5000/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const userData = await userRes.json();
+      const userData: User = await userRes.json();
       if (userRes.ok) setUser(userData);
 
       const notesRes = await fetch("http://localhost:5000/notes", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const notesData = await notesRes.json();
+      const notesData: Note[] = await notesRes.json();
       if (notesRes.ok) setNotes(notesData);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -77,7 +79,7 @@ const UserPage: React.FC = () => {
         body: JSON.stringify({ title: newNoteTitle }),
       });
 
-      const newNote = await res.json();
+      const newNote: Note & { message?: string } = await res.json();
       if (res.ok) {
         setNotes((prev) => [...prev, newNote]);
         setNewNoteTitle("");
@@ -102,7 +104,7 @@ const UserPage: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const data = await res.json();
+      const data: { message?: string } = await res.json();
       if (res.ok) setNotes((prev) => prev.filter((note) => note._id !== noteId));
       else setErrorMessage(data.message || "Failed to delete note.");
     } catch (err) {
