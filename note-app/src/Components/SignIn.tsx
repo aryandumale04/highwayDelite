@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';              // runtime import only
-import type { AxiosResponse } from 'axios'; // type-only import for TS
+import axios from 'axios'; // runtime import only
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+
+interface OTPResponse {
+  otp?: string;
+  token?: string;
+  message?: string;
+}
 
 const SignInPage: React.FC = () => {
   const [generatedOTP, setGeneratedOTP] = useState<string>("");
@@ -31,20 +36,24 @@ const SignInPage: React.FC = () => {
 
     try {
       if (showOTPInput) {
-        const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/verify-otp-signin", {
+        // Verify OTP
+        const res = await axios.post<OTPResponse>("https://highwaydelite-28qp.onrender.com/verify-otp-signin", {
           email,
           otp: generatedOTP
         });
+
         if (res.status === 200) {
           if (res.data.token) localStorage.setItem("token", res.data.token);
           setGeneratedOTP("");
           setShowOTPInput(false);
           setSuccessMessage(res.data.message || "Signed in successfully!");
           setMessage("");
-          setTimeout(() => navigate("/userPage"), 1500); 
+          setTimeout(() => navigate("/userPage"), 1500);
         }
       } else {
-        const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/generate-otp-signin", { email });
+        // Generate OTP
+        const res = await axios.post<OTPResponse>("https://highwaydelite-28qp.onrender.com/generate-otp-signin", { email });
+
         if (res.status === 200) {
           setShowOTPInput(true);
           setMessage(`Your OTP is: ${res.data.otp}`);
@@ -64,11 +73,11 @@ const SignInPage: React.FC = () => {
     try {
       if (!response.credential) return setErrorMessage("Google login failed!");
 
-      const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/google-signin", {
+      const res = await axios.post<OTPResponse>("https://highwaydelite-28qp.onrender.com/google-signin", {
         idToken: response.credential
       });
 
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.data.token!);
       setSuccessMessage("Signed in with Google successfully!");
       setTimeout(() => navigate("/userPage"), 1500);
     } catch (err: any) {
@@ -84,11 +93,7 @@ const SignInPage: React.FC = () => {
         <div className='leftContent p-6 md:p-8 w-full md:w-[85%] mx-auto'>
           {/* Icon */}
           <div className="w-full flex justify-center md:justify-start md:ml-0 mb-2 ml-40 pl-4 md:pl-0">
-            <img 
-              src="./top.png" 
-              alt="hd icon" 
-              className="w-full h-auto object-contain" 
-            />
+            <img src="./top.png" alt="hd icon" className="w-full h-auto object-contain" />
           </div>
 
           {/* Sign in */}

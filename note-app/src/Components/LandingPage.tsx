@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // runtime import
-import type { AxiosResponse } from 'axios'; // TypeScript type only
+import axios from 'axios'; // runtime import only
 import { GoogleLogin } from '@react-oauth/google';
 
 const LandingPage: React.FC = () => {
@@ -17,9 +16,9 @@ const LandingPage: React.FC = () => {
     setSuccessMessage("");
     setMessage("");
 
-    const Name = (document.getElementById("name-input") as HTMLInputElement).value.trim();
-    const email = (document.getElementById("email") as HTMLInputElement).value.trim();
-    const dob = (document.getElementById("DOB") as HTMLInputElement).value.trim();
+    const Name = (document.getElementById("name-input") as HTMLInputElement)?.value.trim();
+    const email = (document.getElementById("email") as HTMLInputElement)?.value.trim();
+    const dob = (document.getElementById("DOB") as HTMLInputElement)?.value.trim();
 
     function isValidEmail(email: string) {
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,7 +32,7 @@ const LandingPage: React.FC = () => {
 
     try {
       if (!showOTPInput) {
-        const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/generate-otp-signup", {
+        const res = await axios.post<{ otp: string }>("https://highwaydelite-28qp.onrender.com/generate-otp-signup", {
           name: Name,
           email,
           dob
@@ -42,11 +41,11 @@ const LandingPage: React.FC = () => {
         setMessage(`Your OTP is: ${res.data.otp}`);
         setSuccessMessage("OTP generated successfully!");
       } else {
-        const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/verify-otp-signup", {
+        const res = await axios.post<{ token: string; message?: string }>("https://highwaydelite-28qp.onrender.com/verify-otp-signup", {
           email,
           otp: enteredOTP
         });
-        localStorage.setItem("token", res.data.token);
+        if (res.data.token) localStorage.setItem("token", res.data.token);
         setEnteredOTP("");
         setOTPInput(false);
         setSuccessMessage(res.data.message || "Signed up successfully!");
@@ -66,7 +65,7 @@ const LandingPage: React.FC = () => {
     try {
       if (!response.credential) return setErrorMessage("Google login failed!");
 
-      const res: AxiosResponse = await axios.post("https://highwaydelite-28qp.onrender.com/google-signup", {
+      const res = await axios.post<{ token: string }>("https://highwaydelite-28qp.onrender.com/google-signup", {
         idToken: response.credential
       });
 
